@@ -67,6 +67,30 @@ def deep_update(data, key, val):
 
 print(deep_update(data, 'k', '5'))  
 
+def func(x):
+    if isinstance(x, int):
+        return x * 5
+    if isinstance(x, str):
+        return x.upper()
+
+def deep_apply(func, data):
+
+    for k, v in data.items():
+        if type(v) is not dict and type(v) is not list and type(v) is not tuple and type(v) is not set:
+            data[k] = func(v)
+
+        if isinstance(v, dict):
+            deep_apply(func, v)
+
+        if isinstance(v, list):
+            for i in v:
+                if isinstance(i, dict):
+                    deep_apply(func, i)
+    return data
+
+# print(deep_apply(func, data))
+
+
 # def deep_find(data, key, result = None):
 #     result = None
 #     for keys, values in data.items():
