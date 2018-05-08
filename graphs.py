@@ -50,22 +50,25 @@ def deep_find_all(data, key, result = None):
 # print(deep_find_all(data, 'd'))
 
 
-def deep_update(data, key, val):
-    new_data = deepcopy(data)
-    for k, v in data.items():
-        if k == key:
-            new_data[k] = val
-        if isinstance(v, dict):
-            deep_find(v, key, val)
-        if isinstance(v, Iterable) and not isinstance(v, str):
-            for i in v:
-                if isinstance(i, dict):
-                    deep_find(i, key, val)
-        return new_data
+def deep_update(dt, key, val):
+    def inner(dt, key, val):
+        a = dt.__class__
+        original_data = dt
+        for k, v in original_data.items():
+            if k == key:
+                original_data[k] = val
+                return original_data
+            if isinstance(v, dict):
+                inner(v, key, val)
+            if isinstance(v, list) and not isinstance(v, str):
+                for i in v:
+                    if isinstance(i, dict):
+                        inner(i, key, val)
+        return original_data
+    return inner(deepcopy(dt), key, val)
 
 
-
-print(deep_update(data, 'k', '5'))  
+# print(deep_update(data, 'k', '5'))  
 
 def func(x):
     if isinstance(x, int):
