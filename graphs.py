@@ -1,7 +1,7 @@
 from collections import Iterable
 from copy import deepcopy
 
-data = {'a': 1, 'b': 2, 'c': {'d': 3, 'e': {'f': 4, 'j': 6, 'h': [{'i': 11}, {'k': 12}, {'d': 12}]}}}
+#data = {'a': 1, 'b': 2, 'c': {'d': 3, 'e': {'f': 4, 'j': 6, 'h': [{'i': 11}, {'k': 12}, {'d': 12}]}}}
 
 #data = {'a': [[{'b': 2}, {'c': 3}]]}
 
@@ -70,40 +70,36 @@ def deep_update(dt, key, val):
 
 # print(deep_update(data, 'k', '5'))  
 
-def func(x):
-    if isinstance(x, int):
-        return x * 5
-    if isinstance(x, str):
-        return x.upper()
 
 def deep_apply(func, data):
 
-    for k, v in data.items():
-        if type(v) is not dict and type(v) is not list and type(v) is not tuple and type(v) is not set:
-            data[k] = func(v)
+    if isinstance(data, dict):
+        for k, v in data.items():
+            if isinstance(k, int):
+                data[func(k)] = data.pop(k)
+            if isinstance(k, str):
+                data[func(k)] = data.pop(k)
 
-        if isinstance(v, dict):
-            deep_apply(func, v)
+            if isinstance(v, dict):
+                deep_apply(func, v)
 
-        if isinstance(v, list):
-            for i in v:
-                if isinstance(i, dict):
-                    deep_apply(func, i)
+            if isinstance(v, Iterable):
+                for i in v:
+                    if isinstance(i, dict):
+                        deep_apply(func, i)
     return data
 
-# print(deep_apply(func, data))
+def deep_compare(obj1, obj2):
+    if isinstance(obj1, dict) and isinstance(obj2, dict):
+        return obj1 == obj2
+    if isinstance(obj1, list) and isinstance(obj2, list):
+        if ((len(obj1) == len(obj2)) and (all(i in obj2 for i in obj1))):
+            return True
+        else:
+            return False
+    
 
+# print(deep_compare(data2, data1))
 
-# def deep_find(data, key, result = None):
-#     result = None
-#     for keys, values in data.items():
-#         if key = keys:
-#             result = keys
-#             break
-#         if isinstance(v, dict):
-#             result = deep_find(v, key)
-#         if isinstance(v, Iterable) and not isinstance(v, str):
-#             for i in v:
-#                 result = deep_find(i, key)
-
-#     return result
+def schema_validator(schema, data):
+    pass
